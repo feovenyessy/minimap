@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+		<title>minimap</title>
+        <link rel="stylesheet" type="text/css" href="css/minimap.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css" />
+		<script src="js/jquery.js"></script>
+		<script src="js/jquery.qtip.min.js"></script>
+		<script src="js/jquery-panzoom.js"></script>
+		<script src="js/jquery.mousewheel.min.js"></script>
+		<script src="js/minimap.js"></script>
+		<script src="cordova.js"></script>
+	</head>
+	
+<body>
+<!-- begin of insertion -->
+<div id="container">
+	<div id="close"><img src="img/close.png" /></div>
+	<div id="thumb_container"></div>
+	<div id="debug"></div>
+	<div id="kep"></div>
+</div>
+<script>
+var subobj1 = {src:'img/minta2.png'};
+var subobj2 = {src:'img/minta.png'};
+
+var object = {
+				src: 'img/Rajz1.png',
+				orig_width: 902,
+				orig_height: 1497,
+				icons: [
+					{type:'popup',x:190,y:450,link: subobj1},
+					{type:'popup',x:828,y:752,link: subobj2},
+					{type:'tooltip',x:125,y:450,txt:'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. '},
+					{type:'tooltip',x:488,y:708,txt:'Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.'}				
+				]
+			};
+</script>
+<div id="launcher" onclick="init(object,'main');">Launch!</div>
+<!-- end of insertion -->
+
+
+
+</body>
+</html>
+
+
+
+
+
+
