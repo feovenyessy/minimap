@@ -27,18 +27,39 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
 		<title>minimap</title>
+        <link rel="stylesheet" type="text/css" href="css/minimap.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css" />
+		<script src="js/jquery.js"></script>
+		<script src="js/jquery.qtip.min.js"></script>
+		<script src="js/jquery-panzoom.js"></script>
+		<script src="js/jquery.mousewheel.min.js"></script>
+		<script src="js/minimap.js"></script>
+		<script src="js/minimap-data.js"></script>
+		<script src="cordova.js"></script>
+		<script>
+			function minimap_init() {
+				var p = window.location.search;
+				var res = p.substring(1, p.length); 
+				eval('var obj=' + res);
+				init(obj,'main');
+			}
+		</script>
 	</head>
-<body>
+	
+<body onload="minimap_init()">
 <!-- begin of insertion -->
-<div id="launcher" style="	width: 200px;
-	height: 100px;
-	display: table-cell;
-	text-align: center;
-	vertical-align: middle;
-	background: red;
-	color: white;
-	cursor: pointer;" onclick="document.location='minimap.html?object1'">Launch!</div>
+<div id="container">
+	<div id="close"><img src="img/close.png" /></div>
+	<div id="thumb_container"></div>
+	<div id="debug"></div>
+	<div id="kep"></div>
+	<div id="resize2large"><img src="img/resize-to-large.png" /></div>
+</div>
+
 <!-- end of insertion -->
+
+
+
 </body>
 </html>
 

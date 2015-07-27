@@ -1,5 +1,8 @@
 this.main_object = {};
 this.is_main = true;
+this.current_src = "";
+this.matrix_cache = [1,0,0];
+this.minimap_minimized = false;
 _self = this;
 
 function init(object,mode) {
@@ -18,26 +21,18 @@ function init(object,mode) {
 		$('#close img').unbind();
 		$('#close img').click(function(){
 			destroy();
+			document.location='index.html';
 		});
 		_self.is_main = true;
 	}
 	
 	$('#close img').load(function(){
-		$('#close').css('left',$(window).width()-$('#close').width());
+		update_close_btn();
 	});
-
-	
-	$('#container').height($(window).height());
-	$('#container').width($(window).width());
-	$("#kep").panzoom('reset');
-
 	
 
-
-	$('#kep').empty();
 	// kép hozzáadása
-	var kep = '<img id="kepbmp" src="'+object.src+'" />'
-	$('#kep').append(kep);
+	load_image(object.src);
 	
 	// only proceed if image is loaded
 	$("#kepbmp").load(function(){
@@ -62,48 +57,128 @@ function init(object,mode) {
 			//update_map([matrix[3],matrix[4],matrix[5]]);	
 		//});
 		
-		panzoom.on("panzoomend", function( e, panzoom, matrix ) {
-			// --- hack for refresh image ----
-			$('#kep').hide();
-			$('#kep').get(0).offsetHeight; 
-			$('#kep').show();
-			$('.ikon').qtip('hide');
-			// --- hack for refresh image ----		
-			
+		panzoom.on("panzoomchange", function( e, panzoom, matrix ) {
 			update_map([matrix[3],matrix[4],matrix[5]]);
+		});
 		
-			//if (_self.is_main) update_icons();
+		panzoom.on("panzoomend", function( e, panzoom, matrix ) {
+			_self.matrix_cache = matrix;
+			refresh_image_hack();
 		});
 		
 		if (_self.is_main) update_icons();
-		
-		// mini map hozzáadása
-		$('#thumb_container').empty();
-		$('#thumb_container').append('<div id="mask"></div>');
-		var thumb = '<img id="thumb" src="'+object.src+'" />';
-		$('#thumb_container').append(thumb);
-		 $("#thumb").load(function(){
-			$('#thumb_container').height($("#thumb").height());
-			$('#thumb_container').css('top',($('#container').height()-$('#thumb_container').height()));
-			$('#thumb_container').css('left',($('#container').width()-$('#thumb_container').width()));
-			
-		 });
-		 
+		update_minimap();
 		update_map([1,0,0]);
+		
+		$("#resize2large").unbind();
+		$("#resize2large").click(function() {
+			$(this).css('display','none');	
+			_self.minimap_minimized = false;
+			update_minimap();					
+		});	
 	 });
 	
 	
 	window.addEventListener("orientationchange", function() {
-		destroy();
-		init(_self.main_object,"main");
+		//destroy();
+		//init(_self.main_object,"main");
+		//console.log('rotate');
 	}, false);
 	
 	window.addEventListener("resize", function() {
-		destroy();
-		init(_self.main_object,"main");
+		//destroy();
+		//init(_self.main_object,"main");
+		reorient()
+		console.log('resize');
 	}, false);
 
 }
+
+
+
+function update_close_btn() {
+	$('#close').css('left',$(window).width()-$('#close').width());
+}
+
+
+
+function reorient() {
+	$('#container').width($(window).width());
+	$('#container').height($(window).height());
+	$("#kep").panzoom("resetDimensions");
+	_self.matrix_cache = [0,0,0];
+	update_minimap();
+	update_close_btn();
+	load_image(_self.current_src);
+}
+
+
+function load_image(src) {
+	_self.current_src = src;
+	$("#kep").panzoom('reset');
+	$('#kep').empty();
+	var kep = '<img id="kepbmp" src="'+src+'" />'
+	$('#kep').append(kep);
+	$("#kep").panzoom('reset');
+	$("#kepbmp").load(function(){
+		if (_self.is_main) update_icons();
+		//$("#kep").panzoom({contain: 'invert', minScale: 1, maxScale: 5});	
+	});
+}
+
+
+function update_minimap() {
+	if (!_self.minimap_minimized) {
+		$('#thumb_container').empty();
+		$('#thumb_container').append('<div id="mask"></div>');
+		$('#thumb_container').append('<div id="resize2small"><img src="img/resize-to-small.png" /></div>');
+		var thumb = '<img id="thumb" src="'+_self.current_src+'" />';
+		$('#thumb_container').append(thumb);
+		$("#thumb").load(function(){
+			$('#thumb_container').show();
+			$('#thumb_container').height($("#thumb").height());
+			$('#thumb_container').css('top',($('#container').height()-$('#thumb_container').height()));
+			$('#thumb_container').css('left',($('#container').width()-$('#thumb_container').width()));
+			
+			$('#resize2small').unbind();
+			$('#resize2small').click(function (){
+				$(this).remove();
+				$('#thumb_container').hide();
+				update_resize_icon();		
+				_self.minimap_minimized = true;
+			});
+		});
+		update_map(_self.matrix_cache);
+	} else {
+		update_resize_icon();
+	}
+	
+}
+
+
+function update_resize_icon() {
+	var top = $(window).height() - $("#resize2large").height();
+	var left = $(window).width() - $("#resize2large").width();
+	console.log(top + ';;;;' + left);
+	$("#resize2large").css('top',top);
+	$("#resize2large").css('left',left);	
+	$("#resize2large").css('display','block');	
+}
+
+
+function refresh_image_hack() {
+	// --- hack for refresh image ----
+	$('#kep').hide();
+	$('#kep').get(0).offsetHeight; 
+	$('#kep').show();
+	$('.ikon').qtip('hide');
+	// --- hack for refresh image ----		
+}
+
+
+
+
+
 
 /* Frissíti a térképet panning vagy zoom esetén */
 function update_map(matrix) {
@@ -131,10 +206,10 @@ function update_map(matrix) {
 
 	$(document).trigger( "imageUpdateEvent");
 	
-	var str = '<table width="100%"><tr><td>mask x: ' + $('#mask').css('left') + '<br>mask y: ' + $('#mask').css('top') + '<br>mask width: ' + $('#mask').width() + '<br>mask height: ' +  $('#mask').height() + '</td>';
-	str += '<td>kep x: ' + parseInt(kep.left) + '<br>kep y: ' + parseInt(kep.top) + '<br>kep width: ' + parseInt(kep.width) + '<br>kep height:' +  parseInt(kep.height) + '</td>';
-	str += '<td>container width: ' + $('#container').width() + '<br>container height: ' + $('#container').height() + '<br>thumb container width: ' + $('#thumb_container').width() + '<br>thumb container height: ' + $('#thumb_container').height() + '</td>';
-	str += '<td>matrix: '+matrix+'<br>offsety:'+offsetY+'nagymax: ' + nagymax + '<br>kismax: '+kismax+'<br>nagyut: '+nagyut+'</td></tr></table>';
+	var str = 'mask x: ' + $('#mask').css('left') + '<br>mask y: ' + $('#mask').css('top') + '<br>mask width: ' + $('#mask').width() + '<br>mask height: ' +  $('#mask').height() + '<br>';
+	str += 'kep x: ' + parseInt(kep.left) + '<br>kep y: ' + parseInt(kep.top) + '<br>kep width: ' + parseInt(kep.width) + '<br>kep height:' +  parseInt(kep.height) + '<br>';
+	str += 'container width: ' + $('#container').width() + '<br>container height: ' + $('#container').height() + '<br>thumb container width: ' + $('#thumb_container').width() + '<br>thumb container height: ' + $('#thumb_container').height() + '<br>';
+	str += 'matrix: '+matrix+'<br>offsety:'+offsetY+'nagymax: ' + nagymax + '<br>kismax: '+kismax+'<br>nagyut: '+nagyut+ '<br>';
 	
 	$('#debug').html(str);
 	//console.log(kep.top);
@@ -201,11 +276,9 @@ function update_icons() {
 
 
 function destroy() {
-	$("#kep").panzoom("reset");
 	$("#kep").empty();
+	$("#kep").panzoom('destroy');
 	$("#debug").empty();
 	$("#thumb_container").empty();
-	$('#container').css('width',$(window).width());
-	$('#container').css('height',$(window).height());
 	$('#container').css('display','none');
 }
