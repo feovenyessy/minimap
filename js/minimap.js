@@ -111,7 +111,6 @@ function reorient() {
 	update_close_btn();
 	load_image(_self.current_src);
 	if (_self.is_main) {
-		console.log("updating icons");
 		update_icons();
 	} 
 }
@@ -160,7 +159,6 @@ function update_minimap() {
 function update_resize_icon() {
 	var top = $(window).height() - $("#resize2large").height();
 	var left = $(window).width() - $("#resize2large").width();
-	console.log(top + ';;;;' + left);
 	$("#resize2large").css('top',top);
 	$("#resize2large").css('left',left);	
 	$("#resize2large").css('display','block');	
@@ -213,7 +211,6 @@ function update_map(matrix) {
 	str += 'matrix: '+matrix+'<br>offsety:'+offsetY+'nagymax: ' + nagymax + '<br>kismax: '+kismax+'<br>nagyut: '+nagyut+ '<br>';
 	
 	$('#debug').html(str);
-	//console.log(kep.top);
 }
 
 /* ikonok frissítése */
