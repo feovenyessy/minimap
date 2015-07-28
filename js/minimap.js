@@ -26,11 +26,15 @@ function init(object,mode) {
 		_self.is_main = true;
 	}
 	
+	$('#container').width($(window).width());
+	$('#container').height($(window).height());
+	
 	$('#close img').load(function(){
 		update_close_btn();
 	});
 	
-
+	$("#kep").panzoom("reset");	
+	
 	// kép hozzáadása
 	load_image(object.src);
 	
@@ -39,7 +43,7 @@ function init(object,mode) {
 		
 		// start panzoom
 		var panzoom = $("#kep").panzoom({contain: 'invert', minScale: 1, maxScale: 5});	
-		
+	
 		// mousewheel zoom support for desktops
 		$("#container").on("mousewheel",function(e){
 			e.preventDefault();
@@ -80,16 +84,11 @@ function init(object,mode) {
 	
 	
 	window.addEventListener("orientationchange", function() {
-		//destroy();
-		//init(_self.main_object,"main");
-		//console.log('rotate');
+
 	}, false);
 	
 	window.addEventListener("resize", function() {
-		//destroy();
-		//init(_self.main_object,"main");
 		reorient()
-		console.log('resize');
 	}, false);
 
 }
@@ -106,23 +105,25 @@ function reorient() {
 	$('#container').width($(window).width());
 	$('#container').height($(window).height());
 	$("#kep").panzoom("resetDimensions");
+	$("#kep").panzoom("reset");	
 	_self.matrix_cache = [0,0,0];
 	update_minimap();
 	update_close_btn();
 	load_image(_self.current_src);
+	if (_self.is_main) {
+		console.log("updating icons");
+		update_icons();
+	} 
 }
 
 
 function load_image(src) {
 	_self.current_src = src;
-	$("#kep").panzoom('reset');
-	$('#kep').empty();
+		$('#kep').empty();
 	var kep = '<img id="kepbmp" src="'+src+'" />'
 	$('#kep').append(kep);
-	$("#kep").panzoom('reset');
 	$("#kepbmp").load(function(){
 		if (_self.is_main) update_icons();
-		//$("#kep").panzoom({contain: 'invert', minScale: 1, maxScale: 5});	
 	});
 }
 
@@ -260,9 +261,8 @@ function update_icons() {
 			
 			
 			// ikon pozicio szamitasa
-			
-			var new_x = parseInt((arr[i].x * kep.width)/_self.main_object.orig_width);
-			var new_y = parseInt((arr[i].y * kep.height)/_self.main_object.orig_height);
+			var new_x = parseInt((arr[i].x * $('#kep').width())/_self.main_object.orig_width);
+			var new_y = parseInt((arr[i].y * $('#kep').height())/_self.main_object.orig_height);
 			
 			$('#'+id).css('left',new_x);
 			$('#'+id).css('top',new_y);
@@ -277,7 +277,7 @@ function update_icons() {
 
 function destroy() {
 	$("#kep").empty();
-	$("#kep").panzoom('destroy');
+	$("#kep").panzoom('reset');
 	$("#debug").empty();
 	$("#thumb_container").empty();
 	$('#container').css('display','none');
