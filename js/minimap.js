@@ -73,6 +73,7 @@ function init(object,mode) {
 		if (_self.is_main) update_icons();
 		update_minimap();
 		update_map([1,0,0]);
+		update_close_btn();
 		
 		$("#resize2large").unbind();
 		$("#resize2large").click(function() {
